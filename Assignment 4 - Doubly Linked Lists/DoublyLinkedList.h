@@ -4,12 +4,14 @@
 //  Blank version of file for assignment
 //
 //  Created by Katz, Ariel on 2/14/23.
+//  Completed by Liang, Eisig on 
 //
 
 #ifndef DoublyLinkedList_h
 #define DoublyLinkedList_h
 
 #include "ListType.h"
+#include <assert.h>
 
 using namespace std;
 
@@ -92,25 +94,93 @@ bool DoublyLinkedList<Type>::
 template <class Type>
 void DoublyLinkedList<Type>::insertFirst(const Type& newItem){
     
-    //TODO: COMPLETE THIS FUNCTION!
+    //TODO: Test this function
+
+    // Build new node
+    NodeType<Type>* newNode = new NodeType<Type>;
+    newNode->data = newItem;
+    newNode->next = this->head; 
+    newNode->prev = NULL;
+
+    // Update previous head node
+    this->head->prev = newNode; // Supposed to tell previous head's prev variable to become newNode
+
+    // Update list's information
+    this->head = newNode;
+    this->count += 1;
 }
 
 template <class Type>
 void DoublyLinkedList<Type>::insertLast(const Type& newItem){
-    //TODO: COMPLETE THIS FUNCTION!
 
+    //TODO: Test this function
+
+    // Build new node
+    NodeType<Type>* newNode = new NodeType<Type>;
+    newNode->data = newItem;
+    newNode->next = NULL;
+    newNode->prev = this->tail;
+
+    // Update previous tail node
+    this->tail->next = newNode;
+
+    // Update list's information
+    this->tail = newNode;
+    this->count += 1;
 }
 
 template <class Type>
 void DoublyLinkedList<Type>::insertNode(const Type& newItem, int index){
-    //TODO: COMPLETE THIS FUNCTION!
 
+    //TODO: Test this function
+    // Supposed to insert node before index; would make newItem take the index in the updated list
+
+    // Traverse to index
+    NodeType<Type>* current = this->head;
+    if (index <= this->count) { // Verify index is within list
+        for (int i = 0; i != index; i++) {
+            current = current->next;
+        }
+    }
+
+    // Build new node
+    NodeType<Type>* newNode = new NodeType<Type>;
+    newNode->data = newItem;
+    newNode->next = current;
+    newNode->prev = current->prev;
+
+    // Update surrounding nodes
+    current->prev->next = newNode; // Supposed to tell old previous node to start pointing to new node
+    current->prev = newNode; // In theory, disconnecting will be safe now
+
+    // Update list's information
+    this->count += 1;
 }
 
 template <class Type>
 void DoublyLinkedList<Type>::deleteNode(const Type& deleteItem){
-    //TODO: COMPLETE THIS FUNCTION!
 
+    //TODO: Test this function
+
+    // Find deleteItem in list
+    assert(!this->isEmptyList());
+    NodeType<Type>* current = this->head;
+    if (current->data == deleteItem) { // Edge case: If deleteItem is list head, update list head
+        this->head = current->next;
+    }
+    else {
+        while (current != NULL) { 
+            if (current->data == deleteItem) {
+                current->prev = current->next; 
+                delete current; // If causes error, OK to delete; not part of assignment
+                break;
+            }
+            current = current->next; 
+        }
+    }
+
+    // Update list's information
+    this->count -= 1;
 }
 
 #endif /* DoublyLinkedList_h */
