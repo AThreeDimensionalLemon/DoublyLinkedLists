@@ -69,7 +69,7 @@ void DoublyLinkedList<Type>::print(bool forward) const
             current = current->prev;
         }
     }
-    
+    cout << endl;
 }
 
 template <class Type>
@@ -99,11 +99,27 @@ void DoublyLinkedList<Type>::insertFirst(const Type& newItem){
     // Build new node
     NodeType<Type>* newNode = new NodeType<Type>;
     newNode->data = newItem;
-    newNode->next = this->head; 
     newNode->prev = NULL;
 
-    // Update previous head node
-    this->head->prev = newNode; // Supposed to tell previous head's prev variable to become newNode
+    // Set next of new node
+    if (this->head) { // Replace head
+        newNode->next = this->head;
+        this->head->prev = newNode; 
+    }
+    else if (this->tail) { // Set head
+
+        // Traverse from tail to beginning
+        NodeType<Type>* current = this->tail;
+        while (current->prev != NULL) {
+            current = current->prev;
+        }
+
+        newNode->next = current;
+        current->prev = newNode;
+    }
+    else { // Start the list with head
+        newNode->next = NULL;
+    }
 
     // Update list's information
     this->head = newNode;
@@ -119,10 +135,26 @@ void DoublyLinkedList<Type>::insertLast(const Type& newItem){
     NodeType<Type>* newNode = new NodeType<Type>;
     newNode->data = newItem;
     newNode->next = NULL;
-    newNode->prev = this->tail;
 
-    // Update previous tail node
-    this->tail->next = newNode;
+    // Set prev of new node
+    if (this->tail) { // Replace tail
+        newNode->prev = this->tail;
+        this->tail->next = newNode;
+    }
+    else if (this->head) { // Set tail
+
+        // Traverse from head to end
+        NodeType<Type>* current = this->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+
+        newNode->prev = current;
+        current->next = newNode;
+    }
+    else { // Start the list with tail
+        newNode->prev = NULL;
+    }
 
     // Update list's information
     this->tail = newNode;
@@ -135,26 +167,38 @@ void DoublyLinkedList<Type>::insertNode(const Type& newItem, int index){
     //TODO: Test this function
     // Supposed to insert node before index; would make newItem take the index in the updated list
 
-    // Traverse to index
-    NodeType<Type>* current = this->head;
-    if (index <= this->count) { // Verify index is within list
-        for (int i = 0; i != index; i++) {
-            current = current->next;
+    if (this->count == 0 or index <= 0) { // Insert head
+        DoublyLinkedList<Type>::insertFirst(newItem);
+        if (index < 0) {
+            cout << "Index was too small; inserted " << newItem << " as head instead." << endl;
         }
     }
+    else if (index >= this->count) { // Insert tail
+        DoublyLinkedList<Type>::insertLast(newItem);
+        cout << "Index was too big; inserted " << newItem << " as tail instead." << endl;
+    }
+    else { // Insert into list
 
-    // Build new node
-    NodeType<Type>* newNode = new NodeType<Type>;
-    newNode->data = newItem;
-    newNode->next = current;
-    newNode->prev = current->prev;
+        // Traverse to index
+        NodeType<Type>* current = this->head;
+        for (int i = 0; i < index; i++) {
+            current = current->next;
+        }
 
-    // Update surrounding nodes
-    current->prev->next = newNode; // Supposed to tell old previous node to start pointing to new node
-    current->prev = newNode; // In theory, disconnecting will be safe now
+        // Build new node
+        NodeType<Type>* newNode = new NodeType<Type>;
+        newNode->data = newItem;
+        newNode->next = current;
+        newNode->prev = current->prev;
 
-    // Update list's information
-    this->count += 1;
+        // Update surrounding nodes
+        current->prev->next = newNode; // Supposed to tell old previous node to start pointing to new node
+        current->prev = newNode; // In theory, disconnecting will be safe now
+
+        // Update list's information (other cases update with called functions)
+        this->count += 1;
+    }
+
 }
 
 template <class Type>
@@ -163,24 +207,42 @@ void DoublyLinkedList<Type>::deleteNode(const Type& deleteItem){
     //TODO: Test this function
 
     // Find deleteItem in list
-    assert(!this->isEmptyList());
-    NodeType<Type>* current = this->head;
-    if (current->data == deleteItem) { // Edge case: If deleteItem is list head, update list head
-        this->head = current->next;
+    if (this->count == 0) {
+        cout << "This list is empty; ignored execution." << endl;
     }
     else {
-        while (current != NULL) { 
-            if (current->data == deleteItem) {
-                current->prev = current->next; 
-                delete current; // If causes error, OK to delete; not part of assignment
+        NodeType<Type>* current = this->head;
+        while (true) {
+
+            if (current->data == deleteItem) { // Delete deleteItem if found
+
+                if (deleteItem == this->head->data) { // If head, update head
+                    current->next->prev = NULL;
+                    this->head = current->next;
+                }
+                else if (deleteItem == this->tail->data) { // If tail, update tail
+                    current->prev->next = NULL;
+                    this->tail = current->prev;
+                }
+                else { // If middle of list, update surrounding nodes
+                    current->next->prev = current->prev;
+                    current->prev->next = current->next;
+                }
+
+                delete current; // If this causes errors, okay to delete
+
+                this->count -= 1; // Update list's information
                 break;
             }
-            current = current->next; 
+
+            if (current->next == NULL) { // If deleteItem not found by end of list, break
+                cout << deleteItem << " isn't in list; ignored execution." << endl;
+                break;
+            }
+
+            current = current->next;
         }
     }
-
-    // Update list's information
-    this->count -= 1;
 }
 
 #endif /* DoublyLinkedList_h */
