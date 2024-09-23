@@ -2,7 +2,7 @@
 //  ListType.h
 //
 //  Created by Ariel Katz on 2/7/23.
-//  Completed by Eisig Liang on 
+//  Used by Liang, Eisig on 9/23/24.
 //
 
 #ifndef ListType_h

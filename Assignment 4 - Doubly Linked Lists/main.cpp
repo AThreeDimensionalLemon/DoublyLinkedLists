@@ -3,6 +3,7 @@
 //  DoublyLinkedList
 //
 //  Created by Katz, Ariel on 2/14/23.
+//  Used by Liang, Eisig on 9/23/24.
 //
 
 /// Testing doubly linked list
@@ -108,8 +109,8 @@ bool testDeleteNode(){
 }
 
 bool testDeleteNodeAtIndex(){
-    /* cout << "Testing deleteNode" << endl;
-     DoublyLinkedList<double> exampleList;
+    /*cout << "Testing deleteNode" << endl;
+    DoublyLinkedList<double> exampleList;
     exampleList.insertFirst(4.5);
     exampleList.insertFirst(4.4);
     exampleList.insertFirst(4.3);
@@ -175,7 +176,7 @@ int main()
 {
     DoublyLinkedList<int> exampleList;
     
-    //cout << "--- Beginning Tests of insert functions --- " << endl;
+    cout << "--- Beginning Tests of insert functions --- " << endl;
     if(testInsertFirst()){
         cout << "insertFirst tests finished";
         cout << "\n\n";
@@ -197,6 +198,7 @@ int main()
     }
     
     ///// Test delete node by index for pairs
+    // I'm working solo, so I should be good to go, yes?
     /*
      if(testDeleteNodeAtIndex()) {
          cout << "deleteNodeAtIndex tests finished";
